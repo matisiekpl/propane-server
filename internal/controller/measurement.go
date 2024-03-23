@@ -6,6 +6,7 @@ import (
 	"github.com/matisiekpl/propane-server/internal/dto"
 	"github.com/matisiekpl/propane-server/internal/service"
 	"net/http"
+	"time"
 )
 
 type MeasurementController interface {
@@ -28,7 +29,7 @@ func (m *measurementController) Insert(c echo.Context) error {
 		return err
 	}
 
-	measurement, err := m.measurementService.Insert(payload.AmmoniaLevel, payload.PropaneLevel, payload.MeasuredAt)
+	measurement, err := m.measurementService.Insert(payload.AmmoniaLevel, payload.PropaneLevel, time.Unix(payload.MeasuredAt, 0))
 	if err != nil {
 		return err
 	}
@@ -37,7 +38,7 @@ func (m *measurementController) Insert(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	go m.broadcaster(message)
+	m.broadcaster(message)
 
 	return c.JSON(http.StatusCreated, measurement)
 }

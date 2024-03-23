@@ -25,7 +25,12 @@ type controllers struct {
 }
 
 func NewControllers(services service.Services) Controllers {
-	c := &controllers{}
+	c := &controllers{
+		connections: map[*connection]bool{},
+		broadcast:   make(chan []byte),
+		register:    make(chan *connection),
+		unregister:  make(chan *connection),
+	}
 	c.measurementController = newMeasurementController(services.Measurement(), c.publish)
 	c.infoController = newInfoController()
 	return c
