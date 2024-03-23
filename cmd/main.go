@@ -53,6 +53,7 @@ func main() {
 	services := service.NewServices(repositories, config, clients)
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
+	go controllers.Loop()
 
 	port := os.Getenv("PORT")
 	if port == "" {

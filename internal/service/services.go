@@ -7,20 +7,20 @@ import (
 )
 
 type Services interface {
-	User() UserService
+	Measurement() MeasurementService
 }
 
 type services struct {
-	userService UserService
+	measurementService MeasurementService
 }
 
 func NewServices(repositories repository.Repositories, config dto.Config, clients client.Clients) Services {
-	userService := newUserService(repositories.User(), config)
+	measurementService := newMeasurementService(repositories.Measurement())
 	return &services{
-		userService: userService,
+		measurementService: measurementService,
 	}
 }
 
-func (s services) User() UserService {
-	return s.userService
+func (s services) Measurement() MeasurementService {
+	return s.measurementService
 }

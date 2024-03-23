@@ -7,24 +7,24 @@ import (
 )
 
 type Repositories interface {
-	User() UserRepository
+	Measurement() MeasurementRepository
 }
 
 type repositories struct {
-	userRepository UserRepository
+	measurementRepository MeasurementRepository
 }
 
 func NewRepositories(db *gorm.DB) Repositories {
-	err := db.AutoMigrate(&model.User{})
+	err := db.AutoMigrate(&model.Measurement{})
 	if err != nil {
 		logrus.Panic(err)
 	}
-	userRepository := newUserRepository(db)
+	measurementRepository := newMeasurementRepository(db)
 	return &repositories{
-		userRepository: userRepository,
+		measurementRepository: measurementRepository,
 	}
 }
 
-func (r repositories) User() UserRepository {
-	return r.userRepository
+func (r repositories) Measurement() MeasurementRepository {
+	return r.measurementRepository
 }
