@@ -9,6 +9,7 @@ import (
 
 type MeasurementService interface {
 	Insert(ammoniaLevel, propaneLevel int64, measuredAt time.Time) (model.Measurement, error)
+	GetByDate(start, end time.Time) ([]model.Measurement, error)
 }
 
 type measurementService struct {
@@ -31,4 +32,12 @@ func (m *measurementService) Insert(ammoniaLevel, propaneLevel int64, measuredAt
 	}
 	logrus.Infof("Inserted measurement: %v", measurement)
 	return measurement, nil
+}
+
+func (m *measurementService) GetByDate(start, end time.Time) ([]model.Measurement, error) {
+	measurements, err := m.measurementRepository.Find(start, end)
+	if err != nil {
+		return nil, err
+	}
+	return measurements, nil
 }
