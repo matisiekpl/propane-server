@@ -55,6 +55,8 @@ func main() {
 	controllers.Route(e)
 	go controllers.Loop()
 
+	go services.Measurement().InsertSamples()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
