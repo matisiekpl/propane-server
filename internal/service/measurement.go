@@ -13,10 +13,11 @@ type MeasurementService interface {
 
 type measurementService struct {
 	measurementRepository repository.MeasurementRepository
+	alertService          AlertService
 }
 
-func newMeasurementService(measurementRepository repository.MeasurementRepository) MeasurementService {
-	return &measurementService{measurementRepository: measurementRepository}
+func newMeasurementService(measurementRepository repository.MeasurementRepository, alertService AlertService) MeasurementService {
+	return &measurementService{measurementRepository: measurementRepository, alertService: alertService}
 }
 
 func (m *measurementService) Insert(ammoniaLevel, propaneLevel int64, measuredAt time.Time) (model.Measurement, error) {
@@ -30,5 +31,11 @@ func (m *measurementService) Insert(ammoniaLevel, propaneLevel int64, measuredAt
 		return model.Measurement{}, err
 	}
 	logrus.Infof("Inserted measurement: %v", measurement)
+
+	err = m.alertService.Check(measurement)
+	if err != nil {
+		logrus.Errorf("Error checking measurement: %v", err)
+	}
+
 	return measurement, nil
 }

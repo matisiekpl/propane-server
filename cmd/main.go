@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"errors"
+	firebase "firebase.google.com/go"
+	"google.golang.org/api/option"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -48,9 +51,19 @@ func main() {
 		}
 	})
 
+	opt := option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		logrus.Panic(err)
+	}
+	m, err := app.Messaging(context.Background())
+	if err != nil {
+		logrus.Panic(err)
+	}
+
 	clients := client.NewClients(config)
 	repositories := repository.NewRepositories(db)
-	services := service.NewServices(repositories, config, clients)
+	services := service.NewServices(repositories, config, clients, m)
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
 	go controllers.Loop()

@@ -17,6 +17,7 @@ type Controllers interface {
 type controllers struct {
 	measurementController MeasurementController
 	infoController        InfoController
+	alertController       AlertController
 
 	connections map[*connection]bool
 	broadcast   chan []byte
@@ -32,6 +33,7 @@ func NewControllers(services service.Services) Controllers {
 		unregister:  make(chan *connection),
 	}
 	c.measurementController = newMeasurementController(services.Measurement(), c.publish)
+	c.alertController = newAlertController(services.Alert(), services.Notification())
 	c.infoController = newInfoController()
 	return c
 }
@@ -49,6 +51,10 @@ func (c *controllers) Route(e *echo.Echo) {
 
 	e.POST("/insert", c.measurementController.Insert)
 	e.GET("/ws", c.handleWebsockets)
+
+	e.PUT("/fcm", c.alertController.SetFirebaseToken)
+	e.PUT("/thresholds", c.alertController.SetThresholds)
+	e.GET("/thresholds", c.alertController.GetThresholds)
 }
 
 type connection struct {

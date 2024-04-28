@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/matisiekpl/propane-server/internal/dto"
 	"github.com/matisiekpl/propane-server/internal/service"
+	"github.com/sirupsen/logrus"
 	"math/rand"
 	"net/http"
 	"time"
@@ -53,11 +54,11 @@ func (m *measurementController) InsertSamples() {
 		measuredAt := time.Now()
 		measurement, err := m.measurementService.Insert(ammoniaLevel, propaneLevel, measuredAt)
 		if err != nil {
-			panic(err)
+			logrus.Panic(err)
 		}
 		message, err := json.Marshal(measurement)
 		if err != nil {
-			panic(err)
+			logrus.Panic(err)
 		}
 		m.broadcaster(message)
 		time.Sleep(10 * time.Second)
