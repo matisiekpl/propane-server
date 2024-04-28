@@ -8,12 +8,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type MeasurementController interface {
 	Insert(c echo.Context) error
-
+	List(c echo.Context) error
 	InsertSamples()
 }
 
@@ -45,6 +46,25 @@ func (m *measurementController) Insert(c echo.Context) error {
 	m.broadcaster(message)
 
 	return c.JSON(http.StatusCreated, measurement)
+}
+
+func (m *measurementController) List(c echo.Context) error {
+	from, err := strconv.Atoi(c.QueryParam("from"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "from parameter is not a valid unix timestamp")
+	}
+	to, err := strconv.Atoi(c.QueryParam("to"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "to parameter is not a valid unix timestamp")
+	}
+
+	start := time.Unix(int64(from), 0)
+	end := time.Unix(int64(to), 0)
+	measurements, err := m.measurementService.GetByDate(start, end)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, measurements)
 }
 
 func (m *measurementController) InsertSamples() {

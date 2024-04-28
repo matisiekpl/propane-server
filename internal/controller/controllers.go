@@ -48,7 +48,7 @@ func (c *controllers) Info() InfoController {
 
 func (c *controllers) Route(e *echo.Echo) {
 	e.GET("/", c.infoController.Info)
-
+	e.GET("/measurements", c.measurementController.List)
 	e.POST("/insert", c.measurementController.Insert)
 	e.GET("/ws", c.handleWebsockets)
 
