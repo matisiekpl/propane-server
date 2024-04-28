@@ -5,6 +5,9 @@ services:
     environment:
       DSN: host=db user=postgres password=jqKwlS9vN0mfm1v dbname=app sslmode=disable
       JWT_SECRET: SecretYouShouldHide
+      GOOGLE_APPLICATION_CREDENTIALS: /credentials/credentials.json
+    volumes:
+      - ./credentials.json:/credentials/credentials.json
     depends_on:
       db:
         condition: service_healthy
