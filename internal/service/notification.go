@@ -9,6 +9,7 @@ import (
 
 type NotificationService interface {
 	SetFirebaseToken(token string) error
+	GetFirebaseToken() (string, error)
 	SendNotification(text string) error
 }
 
@@ -25,6 +26,10 @@ const FirebaseTokenKey = "firebaseToken"
 
 func (n notificationService) SetFirebaseToken(token string) error {
 	return n.settingRepository.Set(FirebaseTokenKey, token)
+}
+
+func (n notificationService) GetFirebaseToken() (string, error) {
+	return n.settingRepository.Get(FirebaseTokenKey)
 }
 
 func (n notificationService) SendNotification(text string) error {

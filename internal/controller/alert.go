@@ -9,6 +9,7 @@ import (
 
 type AlertController interface {
 	SetFirebaseToken(c echo.Context) error
+	GetFirebaseToken(c echo.Context) error
 	SetThresholds(c echo.Context) error
 	GetThresholds(c echo.Context) error
 }
@@ -37,6 +38,14 @@ func (a alertController) SetFirebaseToken(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, payload)
+}
+
+func (a alertController) GetFirebaseToken(c echo.Context) error {
+	token, err := a.notificationService.GetFirebaseToken()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, map[string]string{"token": token})
 }
 
 func (a alertController) SetThresholds(c echo.Context) error {
