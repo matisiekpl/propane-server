@@ -53,6 +53,7 @@ func (c *controllers) Route(e *echo.Echo) {
 	e.GET("/ws", c.handleWebsockets)
 
 	e.PUT("/fcm", c.alertController.SetFirebaseToken)
+	e.GET("/fcm", c.alertController.GetFirebaseToken)
 	e.PUT("/thresholds", c.alertController.SetThresholds)
 	e.GET("/thresholds", c.alertController.GetThresholds)
 }
