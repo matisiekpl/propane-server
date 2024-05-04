@@ -28,6 +28,11 @@ func (s *settingRepository) Get(key string) (string, error) {
 }
 
 func (s *settingRepository) Set(key, value string) error {
+	err := s.db.Where("key = ?", key).Delete(&model.Setting{}).Error
+	if err != nil {
+		return err
+	}
+
 	setting := model.Setting{
 		Key:   key,
 		Value: value,
